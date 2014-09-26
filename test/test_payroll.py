@@ -20,9 +20,9 @@ def test_add_salaried_employee():
     
     assert e.classification.name == "Salaried"
     
-    assert e.salary == 1000.00
+    assert e.classification.salary == 1000.00
     
-    assert e.payment_schedule.name == "Monthly"
+    assert e.schedule.name == "Monthly"
     
     assert e.payment_method.name == "Hold"
     
