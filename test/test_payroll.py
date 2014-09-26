@@ -65,3 +65,20 @@ def test_add_commissioned_employee():
     assert e.schedule.name == "Biweekly"
     
     assert e.payment_method.name == "Hold"   
+    
+def test_delete_employee():
+    
+    empid = 1
+    
+    t = payroll.Add_Commissioned_Employee(empid, "Mike", "Home", 1100, 0.10)
+    t.execute()
+    
+    # Check that the employee was actually created
+    e = payroll.db.get_employee(empid)
+    assert e
+    
+    dt = payroll.Delete_Employee_Transaction(empid)
+    dt.execute()
+
+    with pytest.raises(KeyError):
+        e2 = payroll.db.get_employee(empid)    

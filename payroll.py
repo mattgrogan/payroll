@@ -24,6 +24,11 @@ class Payroll_Database(object):
         
         self.employees[empid] = employee
         
+    def delete_employee(self, empid):
+        """ Delete an employee from the database """
+        
+        del self.employees[empid]
+        
 # Initialize the global payroll database variable
 db = Payroll_Database()
 
@@ -185,4 +190,22 @@ class Add_Hourly_Employee(Add_Employee_Transaction):
         self.schedule = Weekly_Schedule()
         
         self.payment_method = Hold_Method()
+ 
+#############################
+## Delete Employeee Transaction
+#############################  
+
+
+class Delete_Employee_Transaction(object):
+    """ Delete an employee """
+
+    def __init__(self, empid):
+        """ Initialize the transaction """
+        
+        self.empid = empid
+        
+    def execute(self):
+        """ Execute the trnsaction """
+        
+        db.delete_employee(self.empid)
         
