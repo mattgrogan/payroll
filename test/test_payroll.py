@@ -45,4 +45,23 @@ def test_add_hourly_employee():
     
     assert e.payment_method.name == "Hold"
     
+def test_add_commissioned_employee():
     
+    empid = 3
+    
+    t = payroll.Add_Commissioned_Employee(empid, "Mike", "Home", 1100, 0.10)
+    t.execute()
+    
+    e = payroll.db.get_employee(empid)
+    
+    assert e.name == "Mike"
+    
+    assert e.classification.name == "Commissioned"
+    
+    assert e.classification.salary == 1100
+    
+    assert e.classification.commission_rate == 0.10
+    
+    assert e.schedule.name == "Biweekly"
+    
+    assert e.payment_method.name == "Hold"   
