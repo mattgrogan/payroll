@@ -66,6 +66,16 @@ class Salaried_Classification(object):
         self.name = "Salaried"
         self.salary = salary
 
+class Commissioned_Classification(object):
+    """ Classification for salaried employees """
+    
+    def __init__(self, salary, commission_rate):
+        """ Initialize the classification """
+        
+        self.name = "Commissioned"
+        self.salary = salary
+        self.commission_rate = commission_rate
+        
 #############################
 ## Payment Schedules
 #############################
@@ -77,7 +87,15 @@ class Weekly_Schedule(object):
         """ Initialize the schedule """
         
         self.name= "Weekly"
+ 
+class Biweekly_Schedule(object):
+    """ Payment schedule """
+
+    def __init__(self):
+        """ Initialize the schedule """
         
+        self.name= "Biweekly"
+       
 class Monthly_Schedule(object):
     """ Payment schedule """
 
@@ -140,6 +158,20 @@ class Add_Salaried_Employee(Add_Employee_Transaction):
         
         self.payment_method = Hold_Method()
 
+class Add_Commissioned_Employee(Add_Employee_Transaction):
+    """ Add a commissioned employee """
+    
+    def __init__(self, empid, name, address, salary, commission_rate):
+        """ Initialize the transaction """
+     
+        super(Add_Commissioned_Employee, self).__init__(empid, name, address)
+        
+        self.classification = Commissioned_Classification(salary, commission_rate)
+        
+        self.schedule = Biweekly_Schedule()
+        
+        self.payment_method = Hold_Method()
+        
 class Add_Hourly_Employee(Add_Employee_Transaction):
     """ Add a hourly employee """
     
