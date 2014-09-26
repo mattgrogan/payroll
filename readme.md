@@ -4,6 +4,8 @@ Payroll Application
 Agile Software Development: Principles, Patterns, and Practices
 Robert C. Marin
 
+[![Build Status](https://travis-ci.org/mattgrogan/payroll.svg?branch=master)](https://travis-ci.org/mattgrogan/payroll)
+
 # Use Cases
 
 ## Adding Employees
