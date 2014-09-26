@@ -26,3 +26,23 @@ def test_add_salaried_employee():
     
     assert e.payment_method.name == "Hold"
     
+def test_add_hourly_employee():
+    
+    empid = 2
+    
+    t = payroll.Add_Hourly_Employee(empid, "John", "Home", 45.00)
+    t.execute()
+    
+    e = payroll.db.get_employee(empid)
+    
+    assert e.name == "John"
+    
+    assert e.classification.name == "Hourly"
+    
+    assert e.classification.rate == 45.00
+    
+    assert e.schedule.name == "Weekly"
+    
+    assert e.payment_method.name == "Hold"
+    
+    

@@ -48,6 +48,15 @@ class Employee(object):
 ## Employee Classifications
 #############################
 
+class Hourly_Classification(object):
+    """ Classification for hourly employees """
+    
+    def __init__(self, rate):
+        """ Initialize the classification """
+        
+        self.name = "Hourly"
+        self.rate = rate
+        
 class Salaried_Classification(object):
     """ Classification for salaried employees """
     
@@ -61,11 +70,19 @@ class Salaried_Classification(object):
 ## Payment Schedules
 #############################
 
+class Weekly_Schedule(object):
+    """ Payment schedule """
+
+    def __init__(self):
+        """ Initialize the schedule """
+        
+        self.name= "Weekly"
+        
 class Monthly_Schedule(object):
     """ Payment schedule """
 
     def __init__(self):
-        """ Initialize the monthly schedule """
+        """ Initialize the schedule """
         
         self.name= "Monthly"
 
@@ -123,4 +140,17 @@ class Add_Salaried_Employee(Add_Employee_Transaction):
         
         self.payment_method = Hold_Method()
 
+class Add_Hourly_Employee(Add_Employee_Transaction):
+    """ Add a hourly employee """
+    
+    def __init__(self, empid, name, address, rate):
+        """ Initialize the transaction """
+     
+        super(Add_Hourly_Employee, self).__init__(empid, name, address)
+        
+        self.classification = Hourly_Classification(rate)
+        
+        self.schedule = Weekly_Schedule()
+        
+        self.payment_method = Hold_Method()
         
