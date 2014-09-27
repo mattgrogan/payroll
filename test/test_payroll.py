@@ -193,5 +193,21 @@ def test_pay_single_hourly_emp_one_timecard():
     
     validate_hourly_paycheck(pt, empid, paydate, 90.00)    
     
+def test_pay_single_hourly_emp_one_timecard_overtime():
     
+    empid = 1
+    
+    t = payroll.Add_Hourly_Employee(empid, "John", "Home", 45.00)
+    t.execute()
+
+    
+    paydate = datetime.date(2014, 9, 26) # Friday
+    
+    tc = payroll.Timecard_Transaction(paydate, 9.0, empid)
+    tc.execute()
+
+    pt = payroll.Payday_Transaction(paydate)
+    pt.execute()
+    
+    validate_hourly_paycheck(pt, empid, paydate, (8 + 1.5) * 45.00)       
     

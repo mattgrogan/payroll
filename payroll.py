@@ -153,13 +153,23 @@ class Hourly_Classification(object):
     def calculate_pay(self, paycheck):
         """ Calculate the pay """
         
-        total_hours = 0
+        total_pay = 0
         
         for key in self.timecards:
             if key > paycheck.start_date and key <= paycheck.paydate:
-                total_hours += self.timecards[key].hours
+                tc = self.timecards[key]
+                total_pay += self.calculate_pay_for_timecard(tc)
                 
-        return total_hours * self.rate
+        return total_pay
+        
+    def calculate_pay_for_timecard(self, tc):
+        """ Calculate pay including overtime for a single timecard """
+        
+        hours = tc.hours
+        ot = max(0, hours - 8.0)
+        reg_hours = hours - ot
+        
+        return reg_hours * self.rate + ot * self.rate * 1.5
 
 class Salaried_Classification(object):
     """ Classification for salaried employees """
