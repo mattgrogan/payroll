@@ -1,11 +1,6 @@
 import pytest
 import datetime
 
-# This hack to be able to import pacman
-import sys, os
-myPath = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, myPath+ '/../')
-
 import payroll
 
 def test_add_salaried_employee():
@@ -15,7 +10,7 @@ def test_add_salaried_employee():
     t = payroll.Add_Salaried_Employee(empid, "Bob", "Home", 1000.00)
     t.execute()
     
-    e = payroll.db.get_employee(empid)
+    e = payroll.DATABASE.get_employee(empid)
     
     assert e.name == "Bob"
     
@@ -34,7 +29,7 @@ def test_add_hourly_employee():
     t = payroll.Add_Hourly_Employee(empid, "John", "Home", 45.00)
     t.execute()
     
-    e = payroll.db.get_employee(empid)
+    e = payroll.DATABASE.get_employee(empid)
     
     assert e.name == "John"
     
@@ -53,7 +48,7 @@ def test_add_commissioned_employee():
     t = payroll.Add_Commissioned_Employee(empid, "Mike", "Home", 1100, 0.10)
     t.execute()
     
-    e = payroll.db.get_employee(empid)
+    e = payroll.DATABASE.get_employee(empid)
     
     assert e.name == "Mike"
     
@@ -75,14 +70,14 @@ def test_delete_employee():
     t.execute()
     
     # Check that the employee was actually created
-    e = payroll.db.get_employee(empid)
+    e = payroll.DATABASE.get_employee(empid)
     assert e
     
     dt = payroll.Delete_Employee_Transaction(empid)
     dt.execute()
 
     with pytest.raises(KeyError):
-        payroll.db.get_employee(empid)    
+        payroll.DATABASE.get_employee(empid)    
         
 def test_timecard_transaction():
     
@@ -94,7 +89,7 @@ def test_timecard_transaction():
     tct = payroll.Timecard_Transaction(datetime.date(2014, 9, 26), 8.0, empid)
     tct.execute()
 
-    e = payroll.db.get_employee(empid)
+    e = payroll.DATABASE.get_employee(empid)
     assert e
 
     assert e.classification.name == "Hourly"
@@ -113,7 +108,7 @@ def test_sales_transaction():
     tct = payroll.Sales_Transaction(datetime.date(2014, 9, 26), 25000, empid)
     tct.execute()
 
-    e = payroll.db.get_employee(empid)
+    e = payroll.DATABASE.get_employee(empid)
     assert e
 
     assert e.classification.name == "Commissioned"
