@@ -50,6 +50,19 @@ class Employee(object):
         self.payment_method = None
 
 #############################
+## Classification Details 
+#############################
+
+class Timecard(object):
+    """ Timecard for hourly employees """
+    
+    def __init__(self, date, hours):
+        """ Initialize the timecard """
+        
+        self.date = date
+        self.hours = hours
+        
+#############################
 ## Employee Classifications
 #############################
 
@@ -61,6 +74,17 @@ class Hourly_Classification(object):
         
         self.name = "Hourly"
         self.rate = rate
+        self.timecards = {}
+        
+    def add_timecard(self, date, tc):
+        """ Add a timecard """
+
+        self.timecards[date] = tc
+        
+    def get_timecard(self, date):
+        """ Get a timecard """
+        
+        return self.timecards[date]
         
 class Salaried_Classification(object):
     """ Classification for salaried employees """
@@ -195,7 +219,6 @@ class Add_Hourly_Employee(Add_Employee_Transaction):
 ## Delete Employeee Transaction
 #############################  
 
-
 class Delete_Employee_Transaction(object):
     """ Delete an employee """
 
@@ -208,4 +231,30 @@ class Delete_Employee_Transaction(object):
         """ Execute the trnsaction """
         
         db.delete_employee(self.empid)
+ 
+#############################
+## Timecard Transaction
+#############################         
+ 
+class Timecard_Transaction(object):
+    """ Timecard Transaction """
+    
+    def __init__(self, date, hours, empid):
+        """ Initialize the timecard transaction """
         
+        self.date = date
+        self.hours = hours
+        self.empid = empid
+        
+    def execute(self):
+        """ Execute the transaction """
+        
+        e = db.get_employee(self.empid)
+        
+        # Timecards can only be posted to hourly employees
+        if e.classification.name == "Hourly":
+            tc = Timecard(self.date, self.hours)
+            e.classification.add_timecard(self.date, tc)
+        else:
+            raise Exception("Tried to add timecard to non-hourly employee")
+            

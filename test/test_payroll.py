@@ -1,4 +1,5 @@
 import pytest
+import datetime
 
 # This hack to be able to import pacman
 import sys, os
@@ -81,4 +82,25 @@ def test_delete_employee():
     dt.execute()
 
     with pytest.raises(KeyError):
-        e2 = payroll.db.get_employee(empid)    
+        payroll.db.get_employee(empid)    
+        
+def test_timecard_transaction():
+    
+    empid = 1
+    
+    t = payroll.Add_Hourly_Employee(empid, "John", "Home", 45.00)
+    t.execute()
+   
+    tct = payroll.Timecard_Transaction(datetime.date(2014, 9, 26), 8.0, empid)
+    tct.execute()
+
+    e = payroll.db.get_employee(empid)
+    assert e
+
+    assert e.classification.name == "Hourly"
+
+    tc = e.classification.get_timecard(datetime.date(2014, 9, 26))
+
+    assert tc.hours == 8.0       
+    
+    
