@@ -145,3 +145,53 @@ def test_paying_single_salaried_employees():
     assert pc.deductions == 0
     
     assert pc.net_pay == 1000.00
+
+def validate_hourly_paycheck(pt, empid, paydate, pay):
+    """ Helper function to validate paychecks """
+    
+    pc = pt.get_paycheck(empid)
+    
+    assert pc.paydate == paydate
+    
+    assert pc.gross_pay == pay
+    
+    assert pc.deductions == 0
+    
+    assert pc.get_field("Disposition") == "Hold"
+    
+    assert pc.net_pay == pay
+    
+def test_pay_single_hourly_emp_no_timecards():
+    
+    empid = 1
+    
+    t = payroll.Add_Hourly_Employee(empid, "John", "Home", 45.00)
+    t.execute()
+    
+    paydate = datetime.date(2014, 9, 26) # Friday
+
+    pt = payroll.Payday_Transaction(paydate)
+    pt.execute()
+    
+    validate_hourly_paycheck(pt, empid, paydate, 0.00)
+
+def test_pay_single_hourly_emp_one_timecard():
+    
+    empid = 1
+    
+    t = payroll.Add_Hourly_Employee(empid, "John", "Home", 45.00)
+    t.execute()
+
+    
+    paydate = datetime.date(2014, 9, 26) # Friday
+    
+    tc = payroll.Timecard_Transaction(paydate, 2.0, empid)
+    tc.execute()
+
+    pt = payroll.Payday_Transaction(paydate)
+    pt.execute()
+    
+    validate_hourly_paycheck(pt, empid, paydate, 90.00)    
+    
+    
+    

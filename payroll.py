@@ -2,6 +2,7 @@
 # ===================
 
 import calendar
+import datetime
 
 ################
 ## Database
@@ -46,10 +47,11 @@ db = Payroll_Database()
 class Paycheck(object):
     """ Paycheck """
 
-    def __init__(self, paydate):
+    def __init__(self, paydate, start_date):
         """ Initialize the paycheck """
 
         self.paydate = paydate
+        self.start_date = start_date
         self.gross_pay = None
         self.deductions = None
         self.fields = {}
@@ -95,7 +97,7 @@ class Employee(object):
 
     def payday(self, date):
         """ Calculate the pay """
-        pc = Paycheck(date)
+        pc = Paycheck(date, self.schedule.get_start_date(date))
         pc.gross_pay = self.classification.calculate_pay(pc)
         pc.deductions = 0 # Not implemented
         pc.set_fields(self.payment_method.get_fields())
@@ -147,6 +149,17 @@ class Hourly_Classification(object):
         """ Get a timecard """
 
         return self.timecards[date]
+        
+    def calculate_pay(self, paycheck):
+        """ Calculate the pay """
+        
+        total_hours = 0
+        
+        for key in self.timecards:
+            if key > paycheck.start_date and key <= paycheck.paydate:
+                total_hours += self.timecards[key].hours
+                
+        return total_hours * self.rate
 
 class Salaried_Classification(object):
     """ Classification for salaried employees """
@@ -205,7 +218,13 @@ class Weekly_Schedule(object):
     def is_pay_date(self, date):
         """ Is this a pay date? """
 
-        return False # not implemented
+        return date.weekday() == 4 # Friday
+        
+    def get_start_date(self, date):
+        """ Return the pay period start date """
+        
+        if self.is_pay_date(date):
+            return date + datetime.timedelta(days = -7)
 
 class Biweekly_Schedule(object):
     """ Payment schedule """
@@ -234,7 +253,12 @@ class Monthly_Schedule(object):
         last_day = calendar.monthrange(date.year, date.month)[1]
 
         return date.day == last_day
-
+        
+    def get_start_date(self, date):
+        """ Return the pay period start date """
+        
+        return datetime.date(date.year, date.month, 1)
+        
 #############################
 ## Payment Methods
 #############################
