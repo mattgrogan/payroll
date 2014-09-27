@@ -61,6 +61,15 @@ class Timecard(object):
         
         self.date = date
         self.hours = hours
+
+class Sales(object):
+    """ Sales for commissioned employees """
+    
+    def __init__(self, date, amount):
+        """ Initialize the sales """
+        
+        self.date = date
+        self.amount = amount
         
 #############################
 ## Employee Classifications
@@ -104,6 +113,24 @@ class Commissioned_Classification(object):
         self.name = "Commissioned"
         self.salary = salary
         self.commission_rate = commission_rate
+        self.sales = {}
+        
+    def add_sales(self, date, sale):
+        """ Add a sale to the record """
+        
+        # Use a list to enable multiple sales on the same day
+        if date in self.sales:
+            # There's a sale on this date, let's append the new one to the list
+            self.sales[date].append(sale)
+        else:
+            self.sales[date] = (sale) # Convert sale to a list
+            
+    def get_sales(self, date):
+        """ Get the sales for this date """
+        
+        return self.sales[date]
+        
+        
         
 #############################
 ## Payment Schedules
@@ -233,7 +260,7 @@ class Delete_Employee_Transaction(object):
         db.delete_employee(self.empid)
  
 #############################
-## Timecard Transaction
+## Timecard / Sales Transactions
 #############################         
  
 class Timecard_Transaction(object):
@@ -257,4 +284,25 @@ class Timecard_Transaction(object):
             e.classification.add_timecard(self.date, tc)
         else:
             raise Exception("Tried to add timecard to non-hourly employee")
-            
+
+class Sales_Transaction(object):
+    """ Sales Transaction for commissioned employees """
+    
+    def __init__(self, date, hours, empid):
+        """ Initialize the sales transaction """
+        
+        self.date = date
+        self.amount = hours
+        self.empid = empid
+        
+    def execute(self):
+        """ Execute the transaction """
+        
+        e = db.get_employee(self.empid)
+        
+        # Sales can only be posted to commissioned employees
+        if e.classification.name == "Commissioned":
+            tc = Sales(self.date, self.amount)
+            e.classification.add_sales(self.date, tc)
+        else:
+            raise Exception("Tried to add sales to non-commissioned employee")           

@@ -103,4 +103,21 @@ def test_timecard_transaction():
 
     assert tc.hours == 8.0       
     
+def test_sales_transaction():
     
+    empid = 1
+    
+    t = payroll.Add_Commissioned_Employee(empid, "John", "Home", 1100, 0.10)
+    t.execute()
+   
+    tct = payroll.Sales_Transaction(datetime.date(2014, 9, 26), 25000, empid)
+    tct.execute()
+
+    e = payroll.db.get_employee(empid)
+    assert e
+
+    assert e.classification.name == "Commissioned"
+
+    tc = e.classification.get_sales(datetime.date(2014, 9, 26))
+
+    assert tc.amount == 25000     
