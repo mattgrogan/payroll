@@ -120,4 +120,28 @@ def test_sales_transaction():
 
     tc = e.classification.get_sales(datetime.date(2014, 9, 26))
 
-    assert tc.amount == 25000     
+    assert tc.amount == 25000   
+    
+def test_paying_single_salaried_employees():
+    
+    empid = 1
+    
+    t = payroll.Add_Salaried_Employee(empid, "Bob", "Home", 1000.00)
+    t.execute()
+    
+    paydate = datetime.date(2014, 9, 30)
+    
+    pt = payroll.Payday_Transaction(paydate)
+    pt.execute()
+    
+    pc = pt.get_paycheck(empid)
+    
+    assert pc.paydate == paydate
+    
+    assert pc.gross_pay == 1000.00
+    
+    assert pc.get_field("Disposition") == "Hold"
+    
+    assert pc.deductions == 0
+    
+    assert pc.net_pay == 1000.00
